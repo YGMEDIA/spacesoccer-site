@@ -56,3 +56,16 @@ footer { padding: 28px 0 32px; border-top: 1px solid rgba(255, 255, 255, .06); b
   .legal section { padding: 18px 18px; }
   .brand img { height: 28px; }
 }
+
+/* Contact form */
+.contact { display: grid; gap: 12px; }
+.contact label { display: grid; gap: 6px; color: var(--body); font-size: 14px; }
+.contact input, .contact textarea { background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); border-radius: 0; color: #fff; padding: 12px 14px; font: inherit; font-size: 16px; resize: vertical; }
+.contact input:focus, .contact textarea:focus { outline: none; border-color: var(--neon-cyan); box-shadow: 0 0 0 2px rgba(46, 230, 246, .25); }
+.contact .small { font-size: 13px; color: var(--caption); margin: 0; }
+.contact .send { justify-self: start; border: 0; cursor: pointer; color: #fff; padding: 13px 24px; background: linear-gradient(100deg, #f8c62e 0%, #eaa514 70%, #e39710 100%); font-family: "Airstrike", sans-serif; font-style: italic; text-transform: uppercase; font-size: 15px; }
+.contact .send:disabled { opacity: .6; cursor: progress; }
+.form-status { min-height: 22px; margin: 0; font-size: 15px; }
+.form-status.ok { color: #7dffb1; }
+.form-status.err { color: #ff8fa3; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }

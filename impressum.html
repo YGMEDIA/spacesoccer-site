@@ -34,6 +34,19 @@
     Web: <a href="https://www.space-soccer.com">www.space-soccer.com</a> · <a href="https://www.yg-media.de" rel="noopener">yg-media.de</a></p>
   </section>
 
+  <section id="kontakt" hidden>
+    <h2 class="display">Kontaktformular</h2>
+    <form class="contact" id="contact-form" novalidate>
+      <label>Name<input name="name" type="text" maxlength="100" autocomplete="name" required></label>
+      <label>E-Mail<input name="email" type="email" maxlength="200" autocomplete="email" required></label>
+      <label>Nachricht<textarea name="message" rows="6" maxlength="4000" required></textarea></label>
+      <div class="hp" aria-hidden="true"><label>Leer lassen <input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+      <p class="small">Mit dem Absenden werden deine Angaben zur Bearbeitung deiner Anfrage verarbeitet. Mehr dazu in der <a href="datenschutz.html#kontaktformular">Datenschutzerklärung</a>.</p>
+      <button class="send cut" type="submit">Nachricht senden</button>
+      <p class="form-status" id="contact-status" role="status"></p>
+    </form>
+  </section>
+
   <section>
     <h2 class="display">Umsatzsteuer-ID</h2>
     <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: DE297939885</p>
@@ -78,5 +91,33 @@
     <nav><a href="impressum.html" aria-current="page">Impressum</a><a href="datenschutz.html">Datenschutz</a></nav>
   </div>
 </footer>
+<script>
+/* Contact form. Stays hidden until CONTACT_ENDPOINT points at the Supabase edge function. */
+(function () {
+  var CONTACT_ENDPOINT = "";
+  if (!CONTACT_ENDPOINT) return;
+  var box = document.getElementById("kontakt"), form = document.getElementById("contact-form"), status = document.getElementById("contact-status");
+  box.hidden = false;
+  function say(text, ok) { status.textContent = text; status.className = "form-status " + (ok ? "ok" : "err"); }
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var f = form.elements, name = f.name.value.trim(), email = f.email.value.trim(), message = f.message.value.trim();
+    if (!name) { say("Bitte gib deinen Namen an."); f.name.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { say("Bitte gib eine gültige E-Mail-Adresse an."); f.email.focus(); return; }
+    if (message.length < 10) { say("Bitte schreib uns ein paar Worte mehr."); f.message.focus(); return; }
+    var btn = form.querySelector("button"); btn.disabled = true; say("Wird gesendet …", true);
+    fetch(CONTACT_ENDPOINT, { method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name: name, email: email, message: message, website: f.website.value, lang: "de" }) })
+      .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); })
+      .then(function (r) {
+        if (r.body && r.body.ok) { say("Danke! Deine Nachricht ist angekommen, wir melden uns.", true); form.reset(); }
+        else if (r.status === 429) { say("Zu viele Nachrichten in kurzer Zeit. Bitte versuch es gleich noch einmal."); }
+        else { say("Da ist etwas schiefgegangen. Schreib uns gern direkt an info@yg-media.de."); }
+      })
+      .catch(function () { say("Da ist etwas schiefgegangen. Schreib uns gern direkt an info@yg-media.de."); })
+      .then(function () { btn.disabled = false; });
+  });
+})();
+</script>
 </body>
 </html>
