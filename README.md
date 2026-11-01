@@ -1,6 +1,6 @@
-# Space Soccer Website
+# SpaceSoccer Website
 
-One-page website for **Space Soccer** (https://www.space-soccer.com), a sci-fi arcade football game for iOS and Android by YG MEDIA.
+One-page website for **SpaceSoccer** (https://www.space-soccer.com), a sci-fi arcade football game for iOS and Android by YG MEDIA.
 
 Plain HTML, CSS and JavaScript in one file (`index.html`), no build step. Images and fonts live in `assets/`.
 
