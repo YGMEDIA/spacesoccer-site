@@ -257,7 +257,9 @@ h2.display { font-size: clamp(32px, 5vw, 56px); margin: 14px 0 16px; }
   display: grid; place-items: center; touch-action: none; -webkit-user-select: none; user-select: none; transition: transform .12s;
 }
 .ring::before { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: radial-gradient(circle at 50% 35%, #1b1d2e, #05060c); }
-.ring span { position: relative; font-family: var(--display); font-style: italic; font-size: 12px; color: #fff; text-transform: uppercase; }
+.ring img { position: relative; width: calc(100% - 10px); height: calc(100% - 10px); border-radius: 50%; pointer-events: none; transition: opacity .2s; }
+.ring .fire-label { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--display); font-style: italic; font-size: 24px; color: #fff; text-shadow: 0 0 10px #000; }
+.ring.cooling img { opacity: .3; }
 .ring.pressed { transform: scale(.95); }
 .ring.fired { animation: fire .45s ease-out; }
 @keyframes fire { 0% { box-shadow: 0 0 0 0 rgba(255, 154, 31, .8); } 100% { box-shadow: 0 0 0 26px rgba(255, 154, 31, 0); } }
@@ -272,12 +274,12 @@ h2.display { font-size: clamp(32px, 5vw, 56px); margin: 14px 0 16px; }
 .fx { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(28px, 5vw, 60px); align-items: start; }
 .slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px 16px; }
 .slot { background: none; border: 0; color: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0; }
-.slot .ring { width: 104px; height: 104px; pointer-events: none; }
-.slot .ring svg { position: relative; width: 42px; height: 42px; }
+.slot-icon { width: 104px; height: 104px; border-radius: 50%; transition: transform .2s, box-shadow .2s; }
+.slot-icon img { width: 100%; height: 100%; }
 .slot-name { font-family: var(--display); font-style: italic; font-size: 14px; text-transform: uppercase; text-align: center; }
 .slot-lvl { font-size: 12px; color: var(--caption); text-transform: uppercase; letter-spacing: .05em; margin-top: -8px; }
-.slot[aria-pressed="true"] .ring { box-shadow: 0 0 0 3px #fff, 0 0 26px rgba(170, 80, 250, .7); }
-.slot:hover .ring { transform: scale(1.05); }
+.slot[aria-pressed="true"] .slot-icon { box-shadow: 0 0 0 3px #fff, 0 0 26px rgba(255, 255, 255, .45); }
+.slot:hover .slot-icon { transform: scale(1.06); }
 .fx-card { background: var(--surface); overflow: hidden; }
 .fx-card-head { height: 68px; display: flex; align-items: center; justify-content: center; background: var(--grad-play); }
 .fx-card-head h3 { margin: 0; font-size: clamp(22px, 2.5vw, 28px); }
@@ -288,10 +290,11 @@ h2.display { font-size: clamp(32px, 5vw, 56px); margin: 14px 0 16px; }
 .fx-meta b { display: block; font-family: var(--display); font-style: italic; font-weight: 400; font-size: 21px; }
 .fx-meta span { font-size: 12px; color: var(--caption); text-transform: uppercase; letter-spacing: .05em; }
 .fx-fire { display: flex; align-items: center; gap: 18px; }
-.fx-fire .ring { width: 76px; height: 76px; flex: none; }
+.fx-fire .ring { width: 84px; height: 84px; flex: none; }
 .fx-fire p { margin: 0; font-size: 14px; color: var(--caption); }
 .shot-frame { padding: 3px; background: linear-gradient(120deg, var(--neon-pink), transparent 35%, transparent 65%, var(--neon-cyan)); }
 .fx-shot { margin: 16px 0 0; }
+.fx-shot[hidden] { display: none; }
 .fx-shot img { width: 100%; aspect-ratio: 16 / 7.4; object-fit: cover; object-position: 30% 30%; }
 
 /* ------------------------------------------------------------------
@@ -334,8 +337,7 @@ h2.display { font-size: clamp(32px, 5vw, 56px); margin: 14px 0 16px; }
 .g:hover img { transform: scale(1.05); }
 .g span { position: absolute; left: 0; bottom: 0; width: 100%; padding: 10px 16px; text-align: left; background: linear-gradient(0deg, rgba(0, 0, 0, .85), transparent); font-family: var(--display); font-style: italic; font-size: 14px; text-transform: uppercase; color: #fff; }
 .g1 { grid-column: span 4; grid-row: span 2; }
-.g2 { grid-column: span 2; grid-row: span 2; }
-.g3, .g4, .g5 { grid-column: span 2; }
+.g2, .g3 { grid-column: span 2; }
 .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(0, 0, 0, .92); display: none; place-items: center; padding: 24px; }
 .lightbox.open { display: grid; }
 .lightbox img { max-height: 86vh; width: auto; box-shadow: 0 0 60px rgba(160, 90, 250, .35); }
@@ -405,9 +407,8 @@ footer { padding: 40px 0 36px; border-top: 1px solid rgba(255, 255, 255, .06); b
   .flow { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 30px; }
   .flow::before { display: none; }
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 150px; }
-  .g1, .g2 { grid-column: span 2; grid-row: span 2; }
-  .g3, .g4 { grid-column: span 1; }
-  .g5 { grid-column: span 2; }
+  .g1 { grid-column: span 2; grid-row: span 2; }
+  .g2, .g3 { grid-column: span 1; grid-row: span 1; }
   .stick-box { max-width: 420px; }
 }
 @media (max-width: 680px) { .buttons { grid-template-columns: minmax(0, 1fr); } }
@@ -424,8 +425,7 @@ footer { padding: 40px 0 36px; border-top: 1px solid rgba(255, 255, 255, .06); b
   .btn { min-width: 0; width: 100%; }
   .hero-actions .btn { max-width: none; flex-basis: 100%; }
   .slots { gap: 22px 8px; }
-  .slot .ring { width: 86px; height: 86px; }
-  .slot .ring svg { width: 34px; height: 34px; }
+  .slot-icon { width: 86px; height: 86px; }
   .slot-name { font-size: 12px; }
   .fx-meta { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .fx-meta div:last-child { grid-column: span 2; }
@@ -561,18 +561,18 @@ footer { padding: 40px 0 36px; border-top: 1px solid rgba(255, 255, 255, .06); b
       <div>
         <div role="tabpanel" id="panel-ball" aria-labelledby="tab-ball">
           <div class="buttons">
-            <div class="ctl cut"><button class="ring" data-charge><span data-i18n="b.shoot">Shoot</span></button><div><h3 class="display" data-i18n="b.shoot">Shoot</h3><p data-i18n="b.shootp">Hold to charge, release to shoot. A quick tap chips the ball over the keeper.</p></div></div>
-            <div class="ctl cut"><button class="ring" data-charge><span data-i18n="b.pass">Pass</span></button><div><h3 class="display" data-i18n="b.pass">Pass</h3><p data-i18n="b.passp">Goes to the teammate you are facing. Hold longer for a sharper pass.</p></div></div>
-            <div class="ctl cut"><button class="ring" data-charge><span data-i18n="b.cross">Cross</span></button><div><h3 class="display" data-i18n="b.cross">Cross</h3><p data-i18n="b.crossp">Curls the ball into the box. Hold longer to send it further.</p></div></div>
-            <div class="ctl cut"><button class="ring" data-charge><span data-i18n="b.sprint">Sprint</span></button><div><h3 class="display" data-i18n="b.sprint">Sprint</h3><p data-i18n="b.sprintp">Hold for full speed. With the stick alone you jog.</p></div></div>
+            <div class="ctl cut"><button class="ring" data-charge aria-labelledby="h-shoot"><img src="assets/img/ui/btn-shoot.png" alt="" width="217" height="217"></button><div><h3 class="display" id="h-shoot" data-i18n="b.shoot">Shoot</h3><p data-i18n="b.shootp">Hold to charge, release to shoot. A quick tap chips the ball over the keeper.</p></div></div>
+            <div class="ctl cut"><button class="ring" data-charge aria-labelledby="h-pass"><img src="assets/img/ui/btn-pass.png" alt="" width="217" height="217"></button><div><h3 class="display" id="h-pass" data-i18n="b.pass">Pass</h3><p data-i18n="b.passp">Goes to the teammate you are facing. Hold longer for a sharper pass.</p></div></div>
+            <div class="ctl cut"><button class="ring" data-charge aria-labelledby="h-cross"><img src="assets/img/ui/btn-flank.png" alt="" width="217" height="217"></button><div><h3 class="display" id="h-cross" data-i18n="b.cross">Cross</h3><p data-i18n="b.crossp">Curls the ball into the box. Hold longer to send it further.</p></div></div>
+            <div class="ctl cut"><button class="ring" data-charge aria-labelledby="h-sprint"><img src="assets/img/ui/btn-run.png" alt="" width="217" height="217"></button><div><h3 class="display" id="h-sprint" data-i18n="b.sprint">Sprint</h3><p data-i18n="b.sprintp">Hold for full speed. With the stick alone you jog.</p></div></div>
           </div>
         </div>
         <div role="tabpanel" id="panel-noball" aria-labelledby="tab-noball" hidden>
           <div class="buttons">
-            <div class="ctl cut"><button class="ring" data-charge><span data-i18n="b.tackle">Tackle</span></button><div><h3 class="display" data-i18n="b.tackle">Tackle</h3><p data-i18n="b.tacklep">Win the ball standing up. Timing matters, a miss costs you a moment.</p></div></div>
-            <div class="ctl cut"><button class="ring" data-charge><span data-i18n="b.slide">Slide</span></button><div><h3 class="display" data-i18n="b.slide">Slide</h3><p data-i18n="b.slidep">From distance. Tap to slide in, hold to jockey the ball carrier.</p></div></div>
-            <div class="ctl cut"><button class="ring" data-charge><span data-i18n="b.switch">Switch</span></button><div><h3 class="display" data-i18n="b.switch">Switch</h3><p data-i18n="b.switchp">Jumps to the teammate best placed for the ball. Press again to keep switching.</p></div></div>
-            <div class="ctl cut"><button class="ring" data-charge><span data-i18n="b.sprint">Sprint</span></button><div><h3 class="display" data-i18n="b.sprint">Sprint</h3><p data-i18n="b.sprint2p">Chase back. Your teammates run into position on their own.</p></div></div>
+            <div class="ctl cut"><button class="ring" data-charge aria-labelledby="h-tackle"><img src="assets/img/ui/btn-tackle.png" alt="" width="217" height="217"></button><div><h3 class="display" id="h-tackle" data-i18n="b.tackle">Tackle</h3><p data-i18n="b.tacklep">Win the ball standing up. Timing matters, a miss costs you a moment.</p></div></div>
+            <div class="ctl cut"><button class="ring" data-charge aria-labelledby="h-slide"><img src="assets/img/ui/btn-defend.png" alt="" width="217" height="217"></button><div><h3 class="display" id="h-slide" data-i18n="b.slide">Slide</h3><p data-i18n="b.slidep">From distance. Tap to slide in, hold to jockey the ball carrier.</p></div></div>
+            <div class="ctl cut"><button class="ring" data-charge aria-labelledby="h-switch"><img src="assets/img/ui/btn-switch.png" alt="" width="217" height="217"></button><div><h3 class="display" id="h-switch" data-i18n="b.switch">Switch</h3><p data-i18n="b.switchp">Jumps to the teammate best placed for the ball. Press again to keep switching.</p></div></div>
+            <div class="ctl cut"><button class="ring" data-charge aria-labelledby="h-sprint"><img src="assets/img/ui/btn-run.png" alt="" width="217" height="217"></button><div><h3 class="display" data-i18n="b.sprint">Sprint</h3><p data-i18n="b.sprint2p">Chase back. Your teammates run into position on their own.</p></div></div>
           </div>
         </div>
         <p class="ctl-hint" data-i18n="ctl.hint">Prefer a gamepad? Controllers are supported.</p>
@@ -604,13 +604,13 @@ footer { padding: 40px 0 36px; border-top: 1px solid rgba(255, 255, 255, .06); b
               <div class="cut"><b id="fx-kind">Attack</b><span data-i18n="fx.kind">Type</span></div>
             </div>
             <div class="fx-fire">
-              <button class="ring" id="fx-fire"><span id="fx-fire-label">Fire</span></button>
+              <button class="ring" id="fx-fire"><img id="fx-fire-icon" src="assets/img/ui/fx-comet.png" alt="" width="242" height="242"><span class="fire-label" id="fx-fire-label"></span></button>
               <p id="fx-fire-text"></p>
             </div>
           </div>
         </article>
-        <figure class="fx-shot">
-          <div class="shot-frame cut"><img class="cut" id="fx-img" src="assets/img/shot-comet.jpg" alt="" loading="lazy"></div>
+        <figure class="fx-shot" id="fx-shot" hidden>
+          <div class="shot-frame cut"><img class="cut" id="fx-img" alt="" loading="lazy"></div>
         </figure>
       </div>
     </div>
@@ -681,14 +681,12 @@ footer { padding: 40px 0 36px; border-top: 1px solid rgba(255, 255, 255, .06); b
     <div class="section-head reveal">
       <span class="eyebrow">Horizon Arena</span>
       <h2 class="display"><span data-i18n="arena.h1">An arena</span><br><span class="grad-text" data-i18n="arena.h2">that plays along.</span></h2>
-      <p class="lead" data-i18n="arena.lead">Over a thousand fans in stands of glass and light, spotlights in pink and cyan, and after the final whistle the camera flies a lap of honour around the pitch.</p>
+      <p class="lead" data-i18n="arena.lead">The Horizon Arena floats in orbit next to a blue planet. Before kick-off the camera flies in from space, inside over a thousand fans wait under pink and cyan spotlights, and after the final whistle the camera flies a lap of honour around the pitch.</p>
     </div>
     <div class="gallery reveal">
-      <button class="g g1 cut" data-full="assets/img/shot-stadium.jpg"><img src="assets/img/shot-stadium.jpg" loading="lazy" alt="The stands of the Horizon Arena full of cheering fans in pink and cyan" data-i18n-attr="alt:alt.stadium"><span data-i18n="g.1">The crowd rises</span></button>
-      <button class="g g2 cut" data-full="assets/img/shot-pitch.jpg"><img src="assets/img/shot-pitch.jpg" loading="lazy" alt="The pitch from above at kick-off, neon lines and coloured light on the floor" data-i18n-attr="alt:alt.pitch"><span data-i18n="g.2">Kick-off</span></button>
-      <button class="g g3 cut" data-full="assets/img/shot-comet.jpg"><img src="assets/img/shot-comet.jpg" loading="lazy" alt="A burning Comet Shoot flies towards goal" data-i18n-attr="alt:alt.comet"><span>Comet Shoot</span></button>
-      <button class="g g4 cut" data-full="assets/img/shot-sprint.jpg"><img src="assets/img/shot-sprint.jpg" loading="lazy" alt="Hyper Sprint leaves a trail of light" data-i18n-attr="alt:alt.sprint"><span>Hyper Sprint</span></button>
-      <button class="g g5 cut" data-full="assets/img/fx-mega.jpg"><img src="assets/img/fx-mega.jpg" loading="lazy" alt="Mega Goal: the goal glows gold and gets wider" data-i18n-attr="alt:alt.mega"><span>Mega Goal</span></button>
+      <button class="g g1 cut" data-full="assets/img/arena-approach.jpg"><img src="assets/img/arena-approach.jpg" loading="lazy" alt="The Horizon Arena floating in space, ringed by neon lines, satellites and sky towers" data-i18n-attr="alt:alt.approach"><span data-i18n="g.1">Approach</span></button>
+      <button class="g g2 cut" data-full="assets/img/arena-close.jpg"><img src="assets/img/arena-close.jpg" loading="lazy" alt="Close-up of the arena roof with its pink and cyan ribbon in front of a blue planet" data-i18n-attr="alt:alt.close"><span data-i18n="g.2">The roof</span></button>
+      <button class="g g3 cut" data-full="assets/img/arena-orbit.jpg"><img src="assets/img/arena-orbit.jpg" loading="lazy" alt="The arena from far away, in orbit next to a blue planet" data-i18n-attr="alt:alt.orbit"><span data-i18n="g.3">In orbit</span></button>
     </div>
   </div>
 </section>
@@ -756,11 +754,14 @@ var CONFIG = {
   /* Brevo form endpoint (POST): the action="..." URL from the embed code
      of a Brevo sign-up form, https://....sibforms.com/serve/...
      Empty means the form says sign-up opens soon and sends nothing. */
-  newsletterAction: "",
+  newsletterAction: "https://ed1c9669.sibforms.com/serve/MUIFAPCQEnU7_L15ZkrfLwsZ2fCMk6xMcFsz1u4bwjKGKhMtrwLnf-C7-bI-1sOIxYdK-BhimtQoC82uoPsgcWUhjxEuv4JUAw5ID-H034ar3i3n-98j2VkC_zb4o40MxIcxQI9szvtN2jEIHhDdyap51Ep5h5GOx6WdqRVTErpfk7Ekna7IGcRMs7zAgGsDq2ablUNr1zHOJt0TZQ==",
+  /* Off until Brevo's double opt-in is on and the privacy page is online:
+     while false the form says sign-up opens soon and sends nothing. */
+  newsletterLive: false,
   /* Name of the email field Brevo expects. */
   newsletterEmailField: "EMAIL",
   /* Hidden fields Brevo's own embed code sends along (its bot trap). */
-  newsletterExtra: { email_address_check: "" },
+  newsletterExtra: { email_address_check: "", html_type: "simple" },
   /* Send the page language as "locale", so Brevo can write the
      confirmation mail in English or German. */
   newsletterSendLocale: true
@@ -818,12 +819,11 @@ var CONFIG = {
     "xp.pass": "Pass", "xp.cross": "Flanke", "xp.tackle": "Tackling", "xp.shot": "Schuss aufs Tor", "xp.assist": "Vorlage", "xp.goal": "Tor", "xp.win": "Sieg",
     "team.spirit": "Dein Level heißt Spirit und geht bis 99. Für jedes XP gibt es dazu Coins.",
     "arena.h1": "Eine Arena,", "arena.h2": "die mitspielt.",
-    "arena.lead": "Über tausend Zuschauer auf Tribünen aus Glas und Licht, Scheinwerfer in Pink und Cyan, und nach dem Abpfiff fliegt die Kamera eine Ehrenrunde ums Feld.",
-    "g.1": "Die Tribüne steht auf", "g.2": "Anstoß",
-    "alt.stadium": "Die Tribüne der Horizon Arena voller jubelnder Zuschauer in Pink und Cyan",
-    "alt.pitch": "Das Spielfeld von oben beim Anstoß, Neonlinien und farbiges Licht auf dem Boden",
-    "alt.comet": "Ein brennender Comet Shoot fliegt aufs Tor", "alt.sprint": "Hyper Sprint zieht eine Lichtspur hinter sich her",
-    "alt.mega": "Mega Goal: das Tor leuchtet golden und wird breiter",
+    "arena.lead": "Die Horizon Arena schwebt im Orbit neben einem blauen Planeten. Vor dem Anstoß fliegt die Kamera aus dem All heran, drinnen warten über tausend Zuschauer unter pinken und cyanfarbenen Scheinwerfern, und nach dem Abpfiff fliegt die Kamera eine Ehrenrunde ums Feld.",
+    "g.1": "Anflug", "g.2": "Das Dach", "g.3": "Im Orbit",
+    "alt.approach": "Die Horizon Arena schwebt im All, umgeben von Neonlinien, Satelliten und Wolkenkratzer-Inseln",
+    "alt.close": "Nahaufnahme des Arena-Dachs mit seinem pink-cyanen Band vor einem blauen Planeten",
+    "alt.orbit": "Die Arena aus der Ferne, im Orbit neben einem blauen Planeten",
     "su.eyebrow": "Bald verfügbar", "su.h1": "Sei als Erstes", "su.h2": "auf dem Platz.",
     "su.lead": "Space Soccer geht bald in eine geschlossene Beta für iPhone und Android. Trag deine E-Mail ein, und wir sagen dir, wann du spielen kannst, Beta-Einladungen inklusive.",
     "su.label": "E-Mail-Adresse", "su.placeholder": "Deine E-Mail-Adresse", "su.btn": "Eintragen",
@@ -955,31 +955,23 @@ var CONFIG = {
   stick.addEventListener("pointerup", release); stick.addEventListener("pointercancel", release);
 
   /* Abilities: cooldowns and unlock levels from the game's config. */
-  var icons = {
-    comet: '<path d="M30 14a8 8 0 1 1-8 8" stroke-width="3"/><path d="M24 20 6 38M18 14 4 28M30 26 16 40" stroke-width="3"/>',
-    sprint: '<path d="M22 6 10 26h10l-4 16 16-22H22l4-14z" stroke-width="3"/>',
-    shock: '<path d="M26 4 12 24h10l-6 20 20-26H24l6-14z" stroke-width="3"/><circle cx="24" cy="24" r="20" stroke-width="2" stroke-dasharray="4 5"/>',
-    mega: '<rect x="6" y="14" width="36" height="22" stroke-width="3"/><path d="M6 20h36M14 14v22M22 14v22M30 14v22M38 14v22" stroke-width="1.5" opacity=".6"/><path d="M2 25H8M40 25h6" stroke-width="3"/>',
-    ghost: '<path d="M12 42V22a12 12 0 0 1 24 0v20l-4-4-4 4-4-4-4 4-4-4z" stroke-width="3"/><circle cx="19" cy="22" r="2" fill="#fff"/><circle cx="29" cy="22" r="2" fill="#fff"/>',
-    time: '<circle cx="24" cy="26" r="16" stroke-width="3"/><path d="M24 16v10l7 5M8 10l6 6M8 10v8M8 10h8" stroke-width="3"/>'
-  };
   var effects = [
-    { id: "comet", name: "Comet Shoot", cd: 20, lvl: 1, img: "assets/img/shot-comet.jpg",
+    { id: "comet", name: "Comet Shoot", cd: 20, lvl: 1, img: "",
       en: { kind: "Attack", alt: "Comet Shoot: a burning shot flies towards goal", text: "Your next shot becomes a comet. It burns, drags a tail behind it and hits with full force. The camera goes with it." },
       de: { kind: "Angriff", alt: "Comet Shoot: ein brennender Schuss fliegt aufs Tor", text: "Dein nächster Schuss wird zum Kometen. Er brennt, zieht einen Schweif hinter sich her und schlägt mit voller Wucht ein. Die Kamera zieht mit." } },
-    { id: "sprint", name: "Hyper Sprint", cd: 15, lvl: 1, img: "assets/img/shot-sprint.jpg",
+    { id: "sprint", name: "Hyper Sprint", cd: 15, lvl: 1, img: "",
       en: { kind: "Speed", alt: "Hyper Sprint: a player leaves a trail of light", text: "For a few seconds you are faster than everyone else. Speed lines, a trail of light behind you, and the defence can only watch." },
       de: { kind: "Tempo", alt: "Hyper Sprint: ein Spieler zieht eine Lichtspur hinter sich her", text: "Für ein paar Sekunden läufst du schneller als alle anderen. Speed-Linien, eine Lichtspur hinter dir, und die Abwehr schaut nur noch hinterher." } },
-    { id: "shock", name: "Electro Shock", cd: 25, lvl: 5, img: "assets/img/fx-shock.jpg",
+    { id: "shock", name: "Electro Shock", cd: 25, lvl: 5, img: "",
       en: { kind: "Control", alt: "Electro Shock: lightning jumps between players at the centre circle", text: "An electric cloud full of lightning: the opponents around your player freeze for a moment. Not the keeper, that would be too easy." },
       de: { kind: "Kontrolle", alt: "Electro Shock: Blitze springen zwischen den Spielern am Mittelkreis", text: "Eine Elektro-Wolke voller Blitze: die Gegner rund um deinen Spieler bleiben einen Moment stehen. Der Torwart nicht, das wäre zu leicht." } },
-    { id: "mega", name: "Mega Goal", cd: 30, lvl: 15, img: "assets/img/fx-mega.jpg",
+    { id: "mega", name: "Mega Goal", cd: 30, lvl: 15, img: "",
       en: { kind: "Attack", alt: "Mega Goal: the goal glows gold and gets wider", text: "For a while the opponent's goal gets wider and glows gold. Now or never." },
       de: { kind: "Angriff", alt: "Mega Goal: das Tor leuchtet golden und wird breiter", text: "Für eine Weile wird das gegnerische Tor breiter und leuchtet golden. Jetzt oder nie." } },
-    { id: "ghost", name: "Ghost Strike", cd: 35, lvl: 25, img: "assets/img/fx-ghost.jpg",
+    { id: "ghost", name: "Ghost Strike", cd: 35, lvl: 25, img: "",
       en: { kind: "Trick", alt: "Ghost Strike: opponents dissolve into violet sparks", text: "The nearest opponents vanish from the pitch, the ball flies straight through them, and they reappear exactly where they stood." },
       de: { kind: "Trick", alt: "Ghost Strike: Gegner lösen sich in violetten Funken auf", text: "Die nächsten Gegner verschwinden kurz vom Platz, der Ball fliegt durch sie hindurch, und sie tauchen genau dort wieder auf, wo sie standen." } },
-    { id: "time", name: "Time Travel", cd: 40, lvl: 40, img: "assets/img/fx-time.jpg",
+    { id: "time", name: "Time Travel", cd: 40, lvl: 40, img: "",
       en: { kind: "Time", alt: "Time Travel: the picture warps as time runs backwards", text: "Time runs backwards. In slow motion, players, ball and clock rewind a few seconds. Conceded a goal? It never happened." },
       de: { kind: "Zeit", alt: "Time Travel: das Bild verzerrt sich, die Zeit läuft zurück", text: "Die Zeit läuft rückwärts. In Zeitlupe spulen Spieler, Ball und Uhr ein paar Sekunden zurück. Ein Gegentor? Ist nie passiert." } }
   ];
@@ -987,7 +979,7 @@ var CONFIG = {
   effects.forEach(function (fx, i) {
     var b = document.createElement("button");
     b.className = "slot"; b.type = "button"; b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
-    b.innerHTML = '<span class="ring" style="--p:1;--c:' + (i % 2 ? "#a35cf5" : "#2ee6f6") + '"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + icons[fx.id] + '</svg></span>' +
+    b.innerHTML = '<span class="slot-icon"><img src="assets/img/ui/fx-' + fx.id + '.png" alt="" width="242" height="242"></span>' +
       '<span class="slot-name">' + fx.name + '</span><span class="slot-lvl">Spirit ' + fx.lvl + '</span>';
     b.addEventListener("click", function () { showFx(i); });
     slotsEl.appendChild(b);
@@ -1001,22 +993,24 @@ var CONFIG = {
     document.getElementById("fx-cd").textContent = fx.cd + " s";
     document.getElementById("fx-lvl").textContent = fx.lvl;
     document.getElementById("fx-kind").textContent = t.kind;
-    var img = document.getElementById("fx-img"); img.src = fx.img; img.alt = t.alt;
+    var img = document.getElementById("fx-img"), shot = document.getElementById("fx-shot");
+    shot.hidden = !fx.img; if (fx.img) { img.src = fx.img; img.alt = t.alt; }
+    document.getElementById("fx-fire-icon").src = "assets/img/ui/fx-" + fx.id + ".png";
     resetFire();
   }
   function resetFire() {
     cancelAnimationFrame(cdTimer); setRing(fire, 1); fire.disabled = false;
-    fireLabel.textContent = MSG[lang].fire;
+    fire.classList.remove("cooling"); fireLabel.textContent = "";
     document.getElementById("fx-fire-text").textContent = MSG[lang].fireText(effects[fxIndex].cd);
   }
   fire.addEventListener("click", function () {
     var fx = effects[fxIndex], dur = fx.cd * 100, t0 = performance.now();
-    fire.classList.remove("fired"); void fire.offsetWidth; fire.classList.add("fired"); fire.disabled = true;
+    fire.classList.remove("fired"); void fire.offsetWidth; fire.classList.add("fired", "cooling"); fire.disabled = true;
     (function tick(now) {
       var t = Math.min(1, (now - t0) / dur);
       fire.style.setProperty("--p", t);
       fire.style.setProperty("--c", t < 1 ? "rgba(255,255,255,.55)" : "#2ee6f6");
-      fireLabel.textContent = t < 1 ? Math.ceil(fx.cd * (1 - t)) : MSG[lang].fire;
+      fireLabel.textContent = t < 1 ? Math.ceil(fx.cd * (1 - t)) : "";
       if (t < 1) cdTimer = requestAnimationFrame(tick); else resetFire();
     })(t0);
   });
@@ -1070,7 +1064,7 @@ var CONFIG = {
     if (form.elements.website.value) return; /* a bot filled the hidden field */
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim())) { say("invalid"); email.focus(); return; }
     if (!consent.checked) { say("consent"); consent.focus(); return; }
-    if (!CONFIG.newsletterAction) { say("soon", true); return; }
+    if (!CONFIG.newsletterAction || !CONFIG.newsletterLive) { say("soon", true); return; }
     var data = new FormData();
     data.append(CONFIG.newsletterEmailField, email.value.trim());
     Object.keys(CONFIG.newsletterExtra).forEach(function (k) { data.append(k, CONFIG.newsletterExtra[k]); });
