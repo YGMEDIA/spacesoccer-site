@@ -1,0 +1,21 @@
+# Free Supabase projects pause after a week without activity; the contact form would then stop working.
+# This pings the database every three days with the public (publishable) key. It reads nothing:
+# the table is closed to the public, so the answer is always an empty list.
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: "23 6 */3 * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -fsS -m 30 "https://ljwassddjbpuzpgrizci.supabase.co/rest/v1/contact_messages?select=id&limit=1" \
+            -H "apikey: sb_publishable_giJRa38zeVPKZQIxf2mN1Q_PQF3wIxI"
