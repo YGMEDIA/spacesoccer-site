@@ -762,9 +762,9 @@ var CONFIG = {
      of a Brevo sign-up form, https://....sibforms.com/serve/...
      Empty means the form says sign-up opens soon and sends nothing. */
   newsletterAction: "https://ed1c9669.sibforms.com/serve/MUIFAPCQEnU7_L15ZkrfLwsZ2fCMk6xMcFsz1u4bwjKGKhMtrwLnf-C7-bI-1sOIxYdK-BhimtQoC82uoPsgcWUhjxEuv4JUAw5ID-H034ar3i3n-98j2VkC_zb4o40MxIcxQI9szvtN2jEIHhDdyap51Ep5h5GOx6WdqRVTErpfk7Ekna7IGcRMs7zAgGsDq2ablUNr1zHOJt0TZQ==",
-  /* Off until Brevo's double opt-in is on and the privacy page is online:
-     while false the form says sign-up opens soon and sends nothing. */
-  newsletterLive: false,
+  /* Set to false to pause sign-ups: the form then says sign-up opens soon
+     and sends nothing. */
+  newsletterLive: true,
   /* Name of the email field Brevo expects. */
   newsletterEmailField: "EMAIL",
   /* Hidden fields Brevo's own embed code sends along (its bot trap). */
@@ -842,11 +842,11 @@ var CONFIG = {
   var MSG = {
     en: { invalid: "Please enter a valid email address.", consent: "Please tick the box so we are allowed to email you.",
           soon: "Sign-up opens in a few days. Until then, join us on Discord!", ok: "Almost there! Check your inbox and confirm your address.",
-          error: "Something went wrong. Please try again later.", fire: "Fire",
+          error: "Something went wrong. Please try again later.", confirmed: "You're on the list! Thanks for confirming your email.", fire: "Fire",
           fireText: function (s) { return "Tap to fire. Ready again after " + s + " seconds. Ten times faster here."; } },
     de: { invalid: "Bitte gib eine gültige E-Mail-Adresse ein.", consent: "Bitte setz den Haken, damit wir dir schreiben dürfen.",
           soon: "Die Anmeldung öffnet in ein paar Tagen. Bis dahin: komm auf unseren Discord!", ok: "Fast geschafft! Schau in dein Postfach und bestätige deine Adresse.",
-          error: "Da ist etwas schiefgegangen. Bitte versuch es später noch einmal.", fire: "Zünden",
+          error: "Da ist etwas schiefgegangen. Bitte versuch es später noch einmal.", confirmed: "Du bist dabei! Danke, dass du deine E-Mail bestätigt hast.", fire: "Zünden",
           fireText: function (s) { return "Tippen zündet. Nach " + s + " Sekunden wieder bereit. Hier zehnmal schneller."; } }
   };
   var lang = "en";
@@ -1089,6 +1089,9 @@ var CONFIG = {
   var saved = null;
   try { saved = localStorage.getItem("ss-lang"); } catch (e) {}
   applyLang(saved || "en");
+
+  /* Back from the confirmation link in Brevo's double opt-in mail. */
+  if (/[?&]subscribed=1/.test(location.search)) say("confirmed", true);
 })();
 </script>
 </body>
