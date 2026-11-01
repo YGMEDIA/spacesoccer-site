@@ -92,10 +92,13 @@
   </div>
 </footer>
 <script>
-/* Contact form. Stays hidden until CONTACT_ENDPOINT points at the Supabase edge function. */
+/* Contact form: posts to the Supabase function public.submit_contact (project "SpaceSocer", EU).
+   The publishable key is meant to be public; the table itself is closed to the public by RLS. */
 (function () {
-  var CONTACT_ENDPOINT = "";
-  if (!CONTACT_ENDPOINT) return;
+  var CONTACT_LIVE = false;
+  var RPC = "https://ljwassddjbpuzpgrizci.supabase.co/rest/v1/rpc/submit_contact";
+  var KEY = "sb_publishable_giJRa38zeVPKZQIxf2mN1Q_PQF3wIxI";
+  if (!CONTACT_LIVE) return;
   var box = document.getElementById("kontakt"), form = document.getElementById("contact-form"), status = document.getElementById("contact-status");
   box.hidden = false;
   function say(text, ok) { status.textContent = text; status.className = "form-status " + (ok ? "ok" : "err"); }
@@ -106,12 +109,13 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { say("Bitte gib eine gültige E-Mail-Adresse an."); f.email.focus(); return; }
     if (message.length < 10) { say("Bitte schreib uns ein paar Worte mehr."); f.message.focus(); return; }
     var btn = form.querySelector("button"); btn.disabled = true; say("Wird gesendet …", true);
-    fetch(CONTACT_ENDPOINT, { method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name: name, email: email, message: message, website: f.website.value, lang: "de" }) })
-      .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); })
-      .then(function (r) {
-        if (r.body && r.body.ok) { say("Danke! Deine Nachricht ist angekommen, wir melden uns.", true); form.reset(); }
-        else if (r.status === 429) { say("Zu viele Nachrichten in kurzer Zeit. Bitte versuch es gleich noch einmal."); }
+    fetch(RPC, { method: "POST", headers: { "content-type": "application/json", "apikey": KEY },
+      body: JSON.stringify({ p_name: name, p_email: email, p_message: message, p_lang: "de", p_website: f.website.value }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j && j.ok) { say("Danke! Deine Nachricht ist angekommen, wir melden uns.", true); form.reset(); }
+        else if (j && j.error === "rate") { say("Zu viele Nachrichten in kurzer Zeit. Bitte versuch es gleich noch einmal."); }
+        else if (j && j.error === "email") { say("Bitte gib eine gültige E-Mail-Adresse an."); }
         else { say("Da ist etwas schiefgegangen. Schreib uns gern direkt an info@yg-media.de."); }
       })
       .catch(function () { say("Da ist etwas schiefgegangen. Schreib uns gern direkt an info@yg-media.de."); })
