@@ -30,7 +30,7 @@
 
   <section>
     <h2 class="display">Kontakt</h2>
-    <p>E-Mail: <a href="mailto:info@yg-media.de">info@yg-media.de</a><br>
+    <p>E-Mail: <a href="mailto:info@yg-media.de">info@yg-media.de</a> · <a href="#kontakt">Kontaktformular</a><br>
     Web: <a href="https://www.space-soccer.com">www.space-soccer.com</a> · <a href="https://www.yg-media.de" rel="noopener">yg-media.de</a></p>
   </section>
 
@@ -95,7 +95,7 @@
 /* Contact form: posts to the Supabase function public.submit_contact (project "SpaceSocer", EU).
    The publishable key is meant to be public; the table itself is closed to the public by RLS. */
 (function () {
-  var CONTACT_LIVE = false;
+  var CONTACT_LIVE = true;
   var RPC = "https://ljwassddjbpuzpgrizci.supabase.co/rest/v1/rpc/submit_contact";
   var KEY = "sb_publishable_giJRa38zeVPKZQIxf2mN1Q_PQF3wIxI";
   if (!CONTACT_LIVE) return;

@@ -69,3 +69,5 @@ footer { padding: 28px 0 32px; border-top: 1px solid rgba(255, 255, 255, .06); b
 .form-status.ok { color: #7dffb1; }
 .form-status.err { color: #ff8fa3; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.legal section { scroll-margin-top: 84px; }
