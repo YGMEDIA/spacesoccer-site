@@ -382,6 +382,10 @@ footer { padding: 40px 0 36px; border-top: 1px solid rgba(255, 255, 255, .06); b
 .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
 .foot img { width: 140px; }
 .foot p { margin: 0; color: var(--caption); font-size: 14px; }
+.foot-links { display: flex; gap: 18px; }
+.foot-links a, .foot p a { color: var(--body); text-decoration: none; font-size: 14px; }
+.foot-links a:hover, .foot p a:hover { color: #fff; }
+.consent a { color: var(--neon-cyan); }
 .foot a { color: var(--body); text-decoration: none; }
 .foot a:hover { color: #fff; }
 
@@ -706,7 +710,7 @@ footer { padding: 40px 0 36px; border-top: 1px solid rgba(255, 255, 255, .06); b
         <button class="cut" type="submit" id="su-btn" data-i18n="su.btn">Notify me</button>
       </div>
       <div class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-      <label class="consent"><input type="checkbox" id="su-consent" required><span data-i18n="su.consent">Yes, email me news about Space Soccer. I can unsubscribe at any time.</span></label>
+      <label class="consent"><input type="checkbox" id="su-consent" required><span data-i18n="su.consent">Yes, email me news about Space Soccer. I can unsubscribe at any time. Details in the <a href="datenschutz.html">privacy policy</a>.</span></label>
       <p class="form-status" id="su-status" role="status"></p>
     </form>
 
@@ -735,7 +739,7 @@ footer { padding: 40px 0 36px; border-top: 1px solid rgba(255, 255, 255, .06); b
 <footer>
   <div class="wrap foot">
     <img src="assets/img/logo.png" alt="Space Soccer" width="1125" height="358">
-    <!-- Before wide sharing: add links to an Impressum and a privacy page here (required in Germany). -->
+    <nav class="foot-links" aria-label="Legal"><a href="impressum.html" data-i18n="foot.imprint">Imprint</a><a href="datenschutz.html" data-i18n="foot.privacy">Privacy</a></nav>
     <p><a href="https://discord.gg/r3qjjvZu45" target="_blank" rel="noopener">Discord</a> · <span data-i18n="foot.by">A game by YG MEDIA, made with Unity.</span> © 2026</p>
   </div>
 </footer>
@@ -827,10 +831,10 @@ var CONFIG = {
     "su.eyebrow": "Bald verfügbar", "su.h1": "Sei als Erstes", "su.h2": "auf dem Platz.",
     "su.lead": "Space Soccer geht bald in eine geschlossene Beta für iPhone und Android. Trag deine E-Mail ein, und wir sagen dir, wann du spielen kannst, Beta-Einladungen inklusive.",
     "su.label": "E-Mail-Adresse", "su.placeholder": "Deine E-Mail-Adresse", "su.btn": "Eintragen",
-    "su.consent": "Ja, schickt mir Neuigkeiten zu Space Soccer per E-Mail. Ich kann mich jederzeit abmelden.",
+    "su.consent": "Ja, schickt mir Neuigkeiten zu Space Soccer per E-Mail. Ich kann mich jederzeit abmelden. Mehr dazu in der <a href=\"datenschutz.html\">Datenschutzerklärung</a>.",
     "su.or": "oder", "su.discordb": "Discord beitreten", "su.discord": "Neuigkeiten, Einblicke, Feedback",
     "su.ios": "Bald im App Store", "su.android": "Bald bei Google Play",
-    "foot.by": "Ein Spiel von YG MEDIA, gebaut mit Unity."
+    "foot.by": "Ein Spiel von YG MEDIA, gebaut mit Unity.", "foot.imprint": "Impressum", "foot.privacy": "Datenschutz"
   };
   var MSG = {
     en: { invalid: "Please enter a valid email address.", consent: "Please tick the box so we are allowed to email you.",

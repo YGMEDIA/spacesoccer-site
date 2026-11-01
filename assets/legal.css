@@ -1,0 +1,58 @@
+/* Shared styles for the legal pages (Impressum, Datenschutz). Same fonts and colours as the main page. */
+@font-face { font-family: "Airstrike"; src: url("fonts/Airstrike-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Liberation Sans"; src: local("Liberation Sans"), url("fonts/LiberationSans.ttf") format("truetype"); font-display: swap; }
+
+:root {
+  --bg: #05060c;
+  --bg-2: #0a0b16;
+  --surface: rgba(0, 0, 0, .75);
+  --body: #d1d1db;
+  --caption: #8f8f8f;
+  --neon-pink: #ff2bd6;
+  --neon-cyan: #2ee6f6;
+  --grad-logo: linear-gradient(90deg, #00c2ff 0%, #8a5cf8 50%, #e02bd6 100%);
+  --gutter: clamp(16px, 4vw, 48px);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: #fff; font-family: "Liberation Sans", Arial, Helvetica, sans-serif; font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--neon-cyan); }
+a:hover { color: #fff; }
+.space {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 85% 0%, rgba(46, 230, 246, .10), transparent 70%),
+    radial-gradient(50% 50% at 0% 100%, rgba(255, 43, 214, .10), transparent 70%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+}
+.wrap { width: min(860px, 100% - 2 * var(--gutter)); margin-inline: auto; }
+.cut { --cut: 10px; clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
+.display { font-family: "Airstrike", "Arial Black", Impact, sans-serif; font-style: italic; font-weight: 400; text-transform: uppercase; letter-spacing: .02em; line-height: 1.1; }
+
+.top { position: sticky; top: 0; z-index: 10; background: rgba(5, 6, 12, .9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 1px 0 rgba(255, 255, 255, .06); }
+.top-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; }
+.brand img { height: 34px; width: auto; filter: drop-shadow(0 0 12px rgba(140, 90, 250, .45)); }
+.back { color: #fff; text-decoration: none; background: var(--surface); padding: 10px 16px; font-family: "Airstrike", sans-serif; font-style: italic; text-transform: uppercase; font-size: 13px; }
+
+.legal { padding: 48px 0 80px; }
+.note { color: var(--caption); font-size: 14px; margin: 0 0 18px; }
+h1.display { font-size: clamp(34px, 6vw, 56px); margin: 0 0 32px; background: var(--grad-logo); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .14em; display: inline-block; }
+.legal section { background: var(--surface); padding: 22px 26px; margin-bottom: 14px; border-left: 3px solid; border-image: linear-gradient(180deg, var(--neon-pink), var(--neon-cyan)) 1; }
+.legal h2 { font-size: 18px; margin: 0 0 10px; }
+.legal h2 .sym { font-family: "Liberation Sans", Arial, sans-serif; font-style: normal; font-weight: 700; }
+.legal p, .legal li { color: var(--body); margin: 0 0 10px; }
+.legal p:last-child, .legal ul:last-child { margin-bottom: 0; }
+.legal ul { padding-left: 20px; margin: 0 0 10px; }
+
+footer { padding: 28px 0 32px; border-top: 1px solid rgba(255, 255, 255, .06); background: rgba(0, 0, 0, .45); }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: var(--caption); font-size: 14px; }
+.foot p { margin: 0; }
+.foot nav { display: flex; gap: 18px; }
+.foot a { color: var(--body); text-decoration: none; }
+.foot a[aria-current="page"] { color: #fff; }
+
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .legal section { padding: 18px 18px; }
+  .brand img { height: 28px; }
+}
