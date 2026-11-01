@@ -753,14 +753,17 @@ footer { padding: 40px 0 36px; border-top: 1px solid rgba(255, 255, 255, .06); b
    exists; nothing else in the file needs to change.
    ================================================================== */
 var CONFIG = {
-  /* Form endpoint (POST) from the newsletter provider, e.g. Brevo,
-     MailerLite or Mailchimp. Empty means the form says sign-up opens
-     soon and sends nothing anywhere. */
+  /* Brevo form endpoint (POST): the action="..." URL from the embed code
+     of a Brevo sign-up form, https://....sibforms.com/serve/...
+     Empty means the form says sign-up opens soon and sends nothing. */
   newsletterAction: "",
-  /* Name of the email field the provider expects (Brevo: "EMAIL"). */
+  /* Name of the email field Brevo expects. */
   newsletterEmailField: "EMAIL",
-  /* Extra hidden fields some providers need, as { name: value }. */
-  newsletterExtra: {}
+  /* Hidden fields Brevo's own embed code sends along (its bot trap). */
+  newsletterExtra: { email_address_check: "" },
+  /* Send the page language as "locale", so Brevo can write the
+     confirmation mail in English or German. */
+  newsletterSendLocale: true
 };
 
 (function () {
@@ -1071,6 +1074,7 @@ var CONFIG = {
     var data = new FormData();
     data.append(CONFIG.newsletterEmailField, email.value.trim());
     Object.keys(CONFIG.newsletterExtra).forEach(function (k) { data.append(k, CONFIG.newsletterExtra[k]); });
+    if (CONFIG.newsletterSendLocale) data.append("locale", lang);
     btn.disabled = true;
     fetch(CONFIG.newsletterAction, { method: "POST", mode: "no-cors", body: data })
       .then(function () { say("ok", true); form.reset(); })
